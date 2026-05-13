@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Restaurant {
+  id           String     @id @default(uuid())
+  name         String
+  slug         String     @unique
+  email        String     @unique
+  password     String
+  primaryColor   String     @default("#a93702") // Gastronomic Curator Sunset Orange
+  logoUrl        String?
+  logoBorderRadius String?    @default("full") // none, md, full
+  ownerName      String?
+  ownerAvatarUrl String?
+  currency       String     @default("TRY")
+  language       String     @default("EN")
+  qrColor        String?
+  qrBgColor      String?    @default("#ffffff")
+  qrShape        String?    @default("squares") // "squares" or "dots" 
+  qrEyeStyle     String?    @default("square")  // "square" or "circle"
+  qrLogoUrl      String?
+  darkMode       Boolean    @default(false)
+  
+  // Dashboard & UX Expansion
+  locationCity   String?
+  instagram      String?
+  whatsapp       String?
+  operatingHours String?    // Stored as stringified JSON array
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  categories   Category[]
+  campaigns    Campaign[]
+}
+
+model Category {
+  id           String     @id @default(uuid())
+  restaurantId String
+  
+  // Diller
+  name_tr      String
+  name_en      String?
+  name_ar      String?
+
+  orderIndex   Int        @default(0)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  products     Product[]
+}
+
+model Product {
+  id          String     @id @default(uuid())
+  categoryId  String
+
+  // Ortak diller kurgusu
+  name_tr     String
+  name_en     String?
+  name_ar     String?
+  
+  desc_tr     String?
+  desc_en     String?
+  desc_ar     String?
+
+  price       Float
+  imageUrl    String?
+  isActive    Boolean    @default(true)
+  orderIndex  Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  category    Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+model Campaign {
+  id            String     @id @default(uuid())
+  restaurantId  String
+  title         String
+  description   String?
+  price         Float?
+  imageUrl      String?
+  isPopupActive Boolean    @default(true)
+  popupDelay    Int        @default(3000) // The 3-Second Rule constant
+  endDate       DateTime?  // System will auto-deactivate after this date
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  restaurant    Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+}

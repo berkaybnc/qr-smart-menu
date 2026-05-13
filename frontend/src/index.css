@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface antialiased font-body relative overflow-x-hidden;
+    min-height: max(884px, 100dvh);
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+  }
+}
+
+@layer utilities {
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  
+  .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+}
+
+/* Arabic RTL Enhancements */
+html[dir="rtl"] .font-headline { font-weight: 700; }
+html[dir="rtl"] .font-body { font-weight: 500; }
+html[dir="rtl"] .material-symbols-outlined { transform: scaleX(-1); }
+
